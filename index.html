@@ -1,0 +1,939 @@
+
+<!DOCTYPE html>
+<html>    
+    <head>
+        <title>Rebel Inc Scenario Creator Helper</title>
+        <link rel="icon" href="icon.png">
+        <script type="text/javascript" src="langs.js"></script>
+        <script type="text/javascript" src="load.js"></script>
+        <style>
+            *
+            {
+                background:black;
+                color:#98DBF8;
+                font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+            }
+            h3
+            {
+                color:#FFFEC9;
+                margin: 0px;
+                margin-top:5px;
+                margin-bottom:5px;
+                background:#1e1e1e;
+            }
+            .lab
+            {
+                display:none;
+                margin-top: 10%;
+            }
+            #lab_0
+            {
+                display:block;
+            }
+            .lab > div
+            {
+                border: 2px solid #785870;
+                border-left: 4px solid #785870;
+                border-right:4px solid #785870;
+                padding:8px;
+            }
+            #topthingy
+            {
+                display:flex;
+                justify-content: space-between ;
+                position:fixed;
+                width:100%;
+                top:0px;
+                padding:10px; 
+                max-height: 10%;
+            }
+            #pic
+            {
+                object-fit: contain;
+                padding:10px;
+            }
+        </style>
+    </head>
+    <body>   
+        <div id='topthingy'>
+            <div>
+            <div>Choose your editor:</div>
+        <select id='choose_lab' onchange='change_lab()'>
+            <option value='0'>Scenario Overview</option>
+            <option value='1'>Civilian Editor</option>
+            <option value='2'>Military Editor</option>
+            <option value='3'>Insurgent Editor</option>
+            <option value='4'>Region Editor</option>
+            <option value='5'>Zone Editor</option>
+            <option value='6'>Initiative Editor - Initiative Setup</option>
+            <option value='7'>Initiative Editor - Zone Actions</option>
+        </select></div>
+        <img src='my_icon.webp' id='pic' onclick='info()'>
+        </div><br>
+        <div id='lab_0' class='lab'>
+            <div><h3>Scenario Name</h3>
+                Self explanatory
+            </div>
+            <div><h3>Scenario Description</h3>
+                Self explanatory
+            </div>
+            <div><h3>Scenario Icon</h3>
+                Self explanatory
+            </div>
+            <div><h3>Editor Mode</h3>
+                Some options will be unavailable in 'Recommended' mode. Most of them will still be available for editing, hovewer.
+            </div>
+            <div><h3>Category</h3>
+                Self explanatory
+            </div>
+            <div><h3>Language</h3>
+                Self explanatory
+            </div>
+            <div><h3>Operation Name</h3>
+                Self explanatory
+            </div>
+            <div><h3>Difficulty</h3>
+                Self explanatory
+            </div>
+            <div><h3>Cheats</h3>
+                Self explanatory
+            </div>
+            <div><h3>Advisors</h3>
+                This will allow players to choose any advisors they want. If you want to force the players to use specific advisors, you can't besides asking them to or implementing the advisors by changing the variables.
+            </div>
+            <div><h3>Start Year/Month</h3>
+                Self explanatory
+            </div>
+            <div><h3>Starting Event Title/Description</h3>
+                Self explanatory
+            </div>
+            <div><h3>Governor</h3>
+                Self explanatory, although you will also need to chose a region
+            </div>
+            <div><h3>Custom Governor Name/Portrait</h3>
+                Self explanatory
+            </div>
+            <div><h3>Region</h3>
+                Self explanatory, although you will need to choose a governor as well to get access to Initiative Editor
+            </div>
+            <div><h3>Custom Region Name</h3>
+                Self explanatory
+            </div>
+            <div><h3>Custom Tactics & Features</h3>
+                Those are purely cosmetic and are for informing the players playing your scenario of the changes that you made to the scenario. <br>Usually very helpful to include.
+            </div>
+        </div>
+        <div id='lab_1' class='lab'>
+            <div><h3>Starting Reputation</h3>
+                Fairly obvious. Is dependent on difficulty level: 
+                <ul>
+                    <li>+10 rep Casual</li>
+                    <li>No change on Normal</li>
+                    <li>-7 rep Brutal</li>
+                    <li>-10 rep MegaBrutal</li>
+                </ul>
+            </div>
+            <div><h3>Lack of Stability</h3>
+                Amount of turns when Lack of Stability starts reducing your reputation.<br>
+                Approximately 3 years are used in game (216 turns). 6 turns = 1 month. 72 turns = 1 year.
+            </div>
+            <div><h3>Corruption</h3>
+                This changes when Real Corruption starts hurting reputation. With 1, your reputation with 50% Risk with maxed Corruption, will be treated as if you had 40% Risk. The higher the amount of corruption though, the faster the penalty stacks, so it's not a simple '-10% corruption'.
+            </div>
+            <div><h3>Insurgent Control</h3>
+                This will reduce or increase the amount of reputation lost due to insurgent control. Of course, the higher the amount insurgent controlled zones, the worse for the player a positive modifier of Insurgent Control gets. Sadly, it does not seem that making it strongly negative works as you'd expect it to.
+            </div>
+            <div><h3>Support Level</h3>
+                The amount of Global Support Level you start with. Very slowly applies to zones based on accessibility and distance to HQ, except in zones with Garrisons. Rolling out initiatives speeds it up rather substantially, but not as much as Garrisons. On Megabrutal, halve this value to get an expected amount of local support level.<br>
+                Things that use this:<br>
+                <ul>
+                    <li>Dam Local Employment Program: +4</li>
+                    <li>Universal Justice: +3</li>
+                    <li>Democratic Transition: +1</li>
+                    <li>AntiCorruption: +1</li>
+                    <li>Corruption Purge: +1</li>
+                    <li>Fuel Hoarding: -3</li>
+                    <li>Compulsory Work: -3</li>
+                    <li>Tank Justice: -3</li>
+                    <li>Civilian Shakedowns: -2</li>
+                    <li>Non-essential Spending Freeze: -2</li>
+                    <li>Other Specials: -1</li>
+                    <li>Coalition Soldier X: -0.1*X</li>
+                </ul>
+            </div>
+            <div><h3>Hostility Level</h3>
+                This works similarly to Support Level, albeit applies to turning Hostiles into Neutrals and vice versa. A negative value will decrease hostility (decreasing the amount of hostiles) while a positive hostility will increase the amount of hostiles.<br>
+                Things that use this:<br>
+                <ul>
+                    <li>Dam Local Employment Program: -2</li>
+                    <li>Universal Justice: -1,5</li>
+                    <li>AntiCorruption: -1</li>
+                    <li>Corruption Purge: -1</li>
+                    <li>BlackMail Journalists: +4</li>
+                    <li>Civilian Shakedowns: +4</li>
+                    <li>Fuel Hoarding: +3.9</li>
+                    <li>Compulsory Work: +3</li>
+                    <li>Tank Justice: +3</li>
+                    <li>Other Specials: +1</li>
+                    <li>Coalition Soldier 1/2/3/4/5: +0,5/+0,6/+0,9/+1,6/+2,5</li>
+                </ul>
+            </div>
+            <div><h3>Corruption Opinions</h3>
+                Multiply how much Corruption affects Support Level. <br>1.1 = 10% more reduction.<br>2 = 100% more reduction.<br> 0.5 = 50% less reduction.<br> 0 = no reduction. <br> -1 = corruption increases support level
+            </div>
+            <div><h3>Disable Concerns</h3>
+                This will stop concerns from growing and appearing.
+            </div>
+            <div><h3>Additional Concerns</h3>
+                On MegaBrutal, the locals might demand a singular upgrade to the road network or up to two security initiatives (triple security concern is extremely rare).<br>
+                This will cause them to appear on other difficulty levels (but with pacing and level requirement on the appropriate difficulty)
+            </div>
+            <div><h3>Local Concerns' Opinions</h3>
+                This changes how much Concerns can effect Local Support Level. <br>
+                0 = concerns don't affect support level (equivalent to disabling them)<br>
+                0.5 = concerns affect support level half as much<br>
+                1 = no change<br>
+                2 = support level affected twice as much (use with caution on higher difficulty levels - MegaBrutal can grow concerns by 10% a month, especially dangerous with Recruitment Drive)<br>
+            </div>
+            <div><h3>Starting Funds</h3>
+                Self explanatory
+            </div>
+            <div><h3>Starting Budget</h3>
+                The annual budget you get at the beginning of the game.<br>
+                Just tinker with it to get the value you want.
+            </div>
+            <div><h3>Reputation Income</h3>
+                This is how much Reputation affects income.<br>
+                0 - Reputation doesn't reduce income<br>
+                1 - High reputation gives a lot of income<br>
+                5 - High reputation gives bazillions of money
+                Unless you're making a scenario about keeping your reputation up, I suggest not changing this at all.<br>
+                The suggested range is not great though: more than 1 is very likely to give the player a bit too much money.             
+            </div>
+            <div><h3>Stable Zones Income</h3>
+                How much money each Stable Zones give in taxes which go directly to your annual budget. The default value is 1,4.
+                <br>Don't set this value too high unless on purpose - otherwise stabilising a couple of zones will make the game significantly easier. Making it close to zero will make keeping reputation up more important.
+            </div>
+            <div><h3>Inflation Growth</h3>
+                How much all inflation growth is multiplied by.<br>
+                0.5 - half the inflation you'd expect <br>
+                1 - default inflation <br>
+                2 - twice the amount of inflation<br>
+                To be used with caution.
+            </div>
+            <div><h3>Funds Excess Limit</h3>
+                Once Operation has money over this amount, the money above this amount will start to slowly 'disappear'. The more the money above the specified amount, the faster it disappears. Will never reduce the amount of money below this amount.
+            </div>
+            <div><h3>Deficit Funding</h3>
+                Self explanatory. The more debt is accrued, the higher the reputation loss.
+            </div>
+            <div><h3>Unreliable Funding</h3>
+                The game tends to average the amount of budget received each month but still slightly distributes it. With the 36$ default starting budget you can expect 3$ a month (but will get 2$-4$ usually instead). The higher the value, the bigger the differences between individual numbers may be eg. 25$ once and the rest of the months are 1$ each.
+            </div>
+            <div><h3>Budget Deadline</h3>
+                Self explanatory. 6 turns = 1 month. 72 turns = 1 year.<br>
+                Banker Interest, Warlord Blockades and Smuggler Military Inc. unaffected.
+            </div>
+            <div><h3>Subprime Exposure</h3>
+                Self explanatory. 6 turns = 1 month. 72 turns = 1 year.<br>
+                Unsure if it affects Banker Interest, Warlord Blockades and Smuggler Military Inc., but highly unlikely.
+            </div>
+            <div><h3>Disable Peace Negotiations</h3>
+                Self explanatory.
+            </div>
+            <div><h3>Negotiation Effectiveness</h3>
+                How fast the negotiations progress. If they progress fast, this may backfire if the insurgents will start reducing negotiation progress.
+            </div>
+            <div><h3>Stable Zone Negotiation Impact</h3>
+                How much stable zones affect the insurgents' willingness to talk. By default you'll need a couple of zones stable to at least start talking to them (after eliminating their presence as well if you don't have enough stable zones)
+                0 - no effect<br>
+                0.5 - half as much effect<br>
+                1 - default<br>
+                2 - twice as much effect
+            </div>
+            <div><h3>Starting Progress</h3>
+                Self explanatory.
+            </div>
+            <div><h3>Disable Corruption</h3>
+                Self explanatory.
+            </div>
+            <div><h3>Starting Corruption Risk</h3>
+                Self explanatory. This uses the percentage system
+                0 = 0%<br>
+                0.5 = 50%<br>
+                1 = 100%
+            </div>
+            <div><h3>Growth</h3>
+                How fast corruption matches corruption risk.
+                0 - There is no corruption<br>
+                0.5 - half the speed<br>
+                1 - default speed <br>
+                2 - twice as fast<br>
+                96 - MegaBrutal speed
+            </div>
+            <div><h3>Initiative Corruption Risk</h3>
+                Self explanatory.<br>
+                0 = no corruption risk<br>
+                0.5 = half the corruption risk <br>
+                1 = value with effective procurement <br>
+                1.1 = value without effective procurement<br>
+                2 = twice as much corruption risk
+            </div>
+            <div><h3>AntiCorruption Teams</h3>
+                The amount of starting AntiCorruption teams.<br>
+                I personally suggest avoiding this setting, instead using a prefunded initiative in order to not confuse the player.
+            </div>
+            <div><h3>Anti-Corruption Team Effectiveness</h3>
+                How fast AntiCorruption teams deal with corruption.
+                I personally suggest avoiding this setting, instead using a prefunded initiative in order to not confuse the player.
+            </div>
+            <div><h3>Charity Corruption Risk</h3>
+                Self explanatory.<br>
+                If you want to make Charity somewhat more useable, I suggest setting this as low as possible.<br>
+                0 - no corruption risk<br>
+                0.5 - half as much corruption risk<br>
+                1 - default value <br>
+                2 - twice as much corruption risk (will make charity very undesirable)
+            </div>
+            <div><h3>Security Bonus</h3>
+                How much Security all zones begin with, on top the starting 10%. This setting uses the percentage system.
+                0 = 0%<br>
+                0.5 = 50%<br>
+                1 = 100%<br>
+                Setting this to a negative value seems to do nothing.
+            </div>
+            <div><h3>Stable Zone Security Modifier</h3>
+                How much security % zones gain upon becoming stable.This setting uses the percentage system.
+                0 = 0%<br>
+                0.5 = 50%<br>
+                1 = 100%<br>
+            </div>
+            <div><h3>Experts Initiative Build Cost</h3>
+                Self explanatory.
+            </div>
+            <div><h3>Expert Travel Time Modifier</h3>
+                How fast soldiers become around experts.
+                <br>0 - no change
+                <br>0.5 - somewhat faster
+                <br>1 - all zones around experts become 1 logistic (hot wheels)
+            </div>
+            <div><h3>Expert Additional Zones Affected</h3>
+                Self explanatory. The additional zones do not cost money.
+            </div>           
+        </div>
+        <div id='lab_2' class='lab'>
+            <div><h3>Soldier Strength Multiplier</h3>
+                How much strong soldiers are<br>
+                0 - they were just born and have 0 combat capabilities<br>
+                0.3 - advisory role coalition (excluding national soldiers)<br>
+                0.5 - half as strong<br>
+                1 - default <br>
+                1.5 - 50% stronger<br> 
+            </div>
+            <div><h3>Coalition Soldier Strength Multiplier</h3>
+                Coalition soldiers gain approx 1 point of strength per 5 accessibility points while this is set to 20.
+                <br> If set to 10, they'll get 1 point of strength per 10 accessibility. 
+                <br> If set to 5, they'll get 1 point of strength per 20 accessibility and so on.
+            </div>
+            <div><h3>National Soldier Strength Multiplier</h3>
+                See Coalition Soldier Strength Multiplier above. Just change the word Coalition to National.
+            </div>
+            <div><h3>Multiple Soldier Training Penalty</h3>
+                This changes the penalty while you're training multiple soldiers. Setting this too low into negatives will cause soldier training to become <i>faster</i> if you're training many at a time. <br>Recommend not changing it too much.
+            </div>
+            <div><h3>Disable National Soldier Training Penalty</h3>
+                Self explanatory.
+            </div>
+            <div><h3>Coalition Soldier Training</h3>
+                Self explanatory. 6 turns = 1 month. 72 turns = 1 year.
+            </div>
+            <div><h3>National Soldier Training</h3>
+                Self explanatory.  6 turns = 1 month. 72 turns = 1 year. This value is increased if no Coalition soldiers are present.
+            </div>
+            <div><h3>National Soldier - Restless Militia</h3>
+                Self explanatory. 6 turns = 1 month. 72 turns = 1 year.
+            </div>
+            <div><h3>Coalition Soldier Deployment Time</h3>
+                Self explanatory. 6 turns = 1 month. 72 turns = 1 year.
+            </div>
+            <div><h3>Coalition Soldier Extension Cost</h3>
+                Multiplier to the amount of reputation it costs to extend Coalition Soldiers.
+                <br>10 - coalition soldiers costs 10 times more rep to extend
+                <br>2 - twice as much 
+                <br>1 - default value 
+                <br>0 - free extension
+                <br>-1 - extension gives reputation instead
+            </div>
+            <div><h3>Coalition Soldier To National Soldier Support</h3>
+                How much better Coalition Soldiers are at supporting National Soldiers.
+                <br>0 - they can't support them at all
+                <br>1 - default value 
+                <br>4 - 4 times stronger support compared to the default value
+            </div>
+            <div><h3>Various tactics</h3>
+                Self explanatory
+            </div>
+            <div><h3>Slow deployment</h3>
+                No teleportation on Normal/Casual difficulties when deploying troops - need to travel (albeit with still lowered logistics costs due do low difficulty)
+            </div>
+            <div><h3>Soldier Travel Time</h3>
+                Multiply the amount of time it takes to walk to some zone
+                <br>0 - teleportation
+                <br>0.5 - twice as fast
+                <br>1 - default
+                <br>2 - half as fast
+            </div>
+            <div><h3>Soldier Speed Penalty</h3>
+                Add a penalty to travelling through zones, specifically this amount of logistics regardless of the distance
+            </div>
+            <div><h3>Maximum Health</h3>
+                Health of structures (embassy, garrison, HQ, expert)<br>
+                0 - instant death<br>
+                0.5 - 50% health<br>
+                1 - default 100%<br>
+                2 - twice as much health
+            </div>
+            <div><h3>Drone Scanning</h3>
+                Self explanatory
+            </div>
+            <div><h3>Airstrike Strength</h3>
+                Self explanatory.<br>
+                0 - there are no airstrikes, its just one of those cool tricks shows 
+                <br>0.5 - half as strong<br>
+                1 - default <br>
+                2 - twice as strong<br>
+            </div>
+            <div><h3>Airstrike Accuracy</h3>
+                I have no idea lmao
+            </div>
+            <div><h3>Tanks Strength</h3>
+                How much stronger tanks are compared to regular soldiers(?)
+                <br>0 - toy tanks
+                <br>1 - they aren't
+                <br>2 - twice as strong
+            </div>
+            <div><h3>Tanks Additional Training</h3>
+                Self explanatory. 6 turns = 1 month. 72 turns = 1 year.
+            </div>
+            <div><h3>Dangerous Driving</h3>
+                Self explanatory.
+            </div>              
+        </div>
+        <div id='lab_3' class='lab'>
+            <div><h3>Insurgency Start</h3>
+                Self explanatory. 6 turns = 1 month. 72 turns = 1 year.
+            </div>
+            <div><h3>Strength</h3>
+                Self explanatory. Sadly I've no idea how it is exactly calculated so I can't really elaborate, besides that:
+                <br>0 - insurgents are babies
+                <br>0.5 - half as strong
+                <br>1 - default 
+                <br>2 - twice as strong
+            </div>
+            <div><h3>Capability</h3>
+                How much Capability is changed. This will affect how common their attacks are, as well as their numbers (and strength?).
+                <br> -1 - insurgents are very bad
+                <br> 0.8/1.5 - differences invisible on the region screen but are still there
+            </div>
+            <div><h3>Attack Frequency</h3>
+                Self explanatory. 6 turns = 1 month. 72 turns = 1 year.
+            </div>
+            <div><h3>Aggressive AI</h3>
+                Self explanatory
+            </div>
+            <div><h3>Attack Priority</h3>
+                Unsure, but I presume setting it to '2' makes them 2 times more likely to target important zones.
+            </div>
+            <div><h3>Long-Range Attack Distance</h3>
+                Self explanatory.
+            </div>
+            <div><h3>Combat Support</h3>
+                How much strength Insurgent controlled zones provide to adjacent insurgents. It exists even if set to 0, albeit it is invisible. Combat Network has a value of 0.15<br>
+                -1 - insurgents zones lower strength of the insurgents<br>
+                0 - no support<br>
+                0.15 - 150% stronger insurgents per adjacent zone
+            </div>
+            <div><h3>Fleeing</h3>
+                Self explanatory
+            </div>
+            <div><h3>Fleeing Casualties</h3>
+                Chance of casualties in percentages.<br>
+                0 - insurgents will never die randomly<br>
+                0.5 - 50% chance for a kill<br>
+                1 - guaranteed kill<br>
+            </div>
+            <div><h3>Fleeing From Airstrikes</h3>
+                Self explanatory
+            </div>
+            <div><h3>Ambushes</h3>
+                Self explanatory. The description is misleading hovewer, this will keep happening, regardless of how many times it happened.
+            </div>
+            <div><h3>Stable Zone Ambushes</h3>
+                Self explanatory.
+            </div>
+            <div><h3>Recruitment Drive</h3>
+                Self explanatory.
+            </div>
+            <div><h3>Cave Capacity</h3>
+                Self explanatory.
+            </div>
+            <div><h3>Funds From Destruction</h3>
+                Self explanatory. If disabled, destroying camps can either take or give 1$.
+            </div>
+            <div><h3>Airstrike Damage</h3>
+                Self explanatory. Camps have 1 health.<br>
+                0  - no damage<br>
+                0.5 - need two airstrikes to destroy it<br>
+                1 - one airstrike is enough <br>
+                2 - overkill
+            </div>
+            <div><h3>Reputation Gain From Destruction</h3>
+                Self explanatory.
+            </div>                
+        </div>
+        <div id='lab_4' class='lab'>
+            <div><h3>Disable Region Features</h3>
+                Self explanatory. Will also disable hidden properties, if any.
+            </div>
+            <div><h3>Government Control</h3>
+                This amount of randomly chosen zones will be stable at the beginning of the game.
+            </div>
+            <div><h3>Zones with Intel</h3>
+                You will have this many zones with Intel, regardless of the difficulty.
+            </div>
+            <div><h3>Insurgent Control</h3>
+                This amount of randomly chosen zones will be insurgent controlled at the beginning of the game.
+            </div>
+            <div><h3>Insurgent Camps</h3>
+                Amount of initial camps. Warning! Setting this to 0 may produce undesirable results on lower difficulties (unless you don't want any insurgents)
+            </div>
+            <div><h3>Caves</h3>
+                Those will be placed in random mountaineous zones.
+            </div>
+            <div><h3>Catacombs</h3>
+                Those will be placed in random urban zones.
+            </div>
+            <div><h3>Garrisons</h3>
+                Those will be placed in random zones.
+            </div>
+            <div><h3>Embassies</h3>
+                Those will be placed depending on the embassy priority zones.
+            </div>
+            <div><h3>Tank Depots</h3>
+                Those will be placed in random zones with flat terrain.
+            </div>
+            <div><h3>Specialist Depots</h3>
+                Those will be chosen randomly and placed in random zones with flat terrain.
+            </div>
+            <div><h3>Intel Rate</h3>
+                Speed of intel gathering.<br>
+                0 - no intel gathering<br>
+                0.5 - half as fast<br>
+                1 - default <br>
+                2 - twice as fast<br>
+            </div>
+            <div><h3>Intel Decay</h3>
+                Change the speed of Intel decreasing in zones due to insurgent control.<br>
+                0 - no decrease<br>
+                0.5 - half as much decrease<br>
+                1 - default <br>
+                2 - twice as much decrease
+            </div>
+        </div>
+        <div id='lab_5' class='lab'>
+            <div><h3>Zone Name</h3>
+                Self explanatory
+            </div>
+            <div><h3>Initial Control</h3>
+                Self explanatory
+            </div>
+            <div><h3>Number of People</h3>
+                Self explanatory
+            </div>
+            <div><h3>Local Support Level</h3>
+                Doesn't seem to do anything.
+            </div>
+            <div><h3>Local Hostility Level</h3>
+                Doesn't seem to do anything.
+            </div>
+            <div><h3>Population % of Supporters</h3>
+                How many supporters this zone starts with. Percentage system<br>
+                0 - no one is a supporter <br>
+                0.5 - 50% supporters <br>
+                1 - 100% supporters<br>
+            </div>
+            <div><h3>Hostile Supporters Modifier</h3>
+                Changes how many Hostiles there are in the zone compared to the default value. Percentage system.
+                <br>
+                -1 - no hostiles<br>
+                0 - no change<br>
+                0.5 - 50% more hostiles<br>
+                1 - 100% more hostiles<br>
+                2 - 200% more hostiles
+            </div>
+            <div><h3>Attack Priority</h3>
+                How much of a priority for the insurgents is this zone in particular. The higher the amount, the higher the priority.
+            </div>
+            <div><h3>Insurgent Fighters</h3>
+                Starting amount of Insurgent Fighters. Warning! They may launch attacks without the player being able to respond.
+            </div>
+            <div><h3>Structures</h3>
+                Self explanatory.
+            </div>
+            <div><h3>Ambush</h3>
+                Clarification: It only triggers if soldiers destroy it like any other structure. It has 0.0001 HP which means it dies in 1 turn. This also means it won't be destroyed, as long as soldiers gather intel and are pulled out before they gather it fully.
+            </div>
+        </div>
+        <div id='lab_6' class='lab'>
+            <div><h3>Name/Description/Icon/Overlays/Colour</h3>
+                Self explanatory
+            </div>
+            <div><h3>Funds</h3>
+                Self explanatory. Cost without inflation, so take that into account.
+            </div>
+            <div><h3>Reputation</h3>
+                How much reputation is lost by buying this initiative. If negative, reputation equal to the amount is added instead.
+            </div>
+            <div><h3>Lock Initiative</h3>
+                Not sure what is this for without the decision editor.
+            </div>
+            <div><h3>Pre-funded Initiative</h3>
+                The game starts with this initiative funded for free. No inflation awarded.
+            </div>
+            <div><h3>Support Level</h3>
+                The amount of Global Support Level you gain for buying this initiative. Very slowly applies to zones based on accessibility and distance to HQ, except in zones with Garrisons. Rolling out initiatives speeds it up rather substantially, but not as much as Garrisons. On Megabrutal, halve this value to get an expected amount of local support level.<br>
+                Things that use this:<br>
+                <ul>
+                    <li>Dam Local Employment Program: +4</li>
+                    <li>Universal Justice: +3</li>
+                    <li>Democratic Transition: +1</li>
+                    <li>AntiCorruption: +1</li>
+                    <li>Corruption Purge: +1</li>
+                    <li>Fuel Hoarding: -3</li>
+                    <li>Compulsory Work: -3</li>
+                    <li>Tank Justice: -3</li>
+                    <li>Civilian Shakedowns: -2</li>
+                    <li>Non-essential Spending Freeze: -2</li>
+                    <li>Other Specials: -1</li>
+                    <li>Coalition Soldier X: -0.1*X</li>
+                </ul>
+            </div>
+            <div><h3>Hostility Level</h3>
+                This works similarly to Support Level, albeit applies to turning Hostiles into Neutrals and vice versa. A negative value will decrease hostility (decreasing the amount of hostiles) while a positive hostility will increase the amount of hostiles.<br>
+                Things that use this:<br>
+                <ul>
+                    <li>Dam Local Employment Program: -2</li>
+                    <li>Universal Justice: -1,5</li>
+                    <li>AntiCorruption: -1</li>
+                    <li>Corruption Purge: -1</li>
+                    <li>BlackMail Journalists: +4</li>
+                    <li>Civilian Shakedowns: +4</li>
+                    <li>Fuel Hoarding: +3.9</li>
+                    <li>Compulsory Work: +3</li>
+                    <li>Tank Justice: +3</li>
+                    <li>Other Specials: +1</li>
+                    <li>Coalition Soldier 1/2/3/4/5: +0,5/+0,6/+0,9/+1,6/+2,5</li>
+                </ul>
+            </div>
+            <div><h3>Initiative Rollout</h3>
+                Changes the amount of hammers rolling out various initiatives in this type of zones.<br>
+                There is a minimum of 1 hammer per initiative.<br>
+                Extra hammers cannot roll out initiatives of the same type.<br>
+                Outreach initiatives use 1-4.
+            </div>
+            <div><h3>Local Support Modifier</h3>
+                How much additional Local Support you get. Dependent on difficulty.<br>
+                On MegaBrutal, 0.5 is equivalent to doubling your support level.
+                <br>PR1 has this value set to 0.45 and PR2 to 0.25.
+            </div>
+            <div><h3>Inflation Multiplier</h3>
+                Self explanatory.<br>
+                -1 - no inflation<br>
+                -0.5 - half the inflation<br>
+                0 - no change <br>
+                1 - twice the inflation
+            </div>
+            <div><h3>Inflation Change Percentage</h3>
+                Self explanatory. Percentage system.<br>
+                -1 - -100% inflation<br>
+                0 - no change<br>
+                0.5 - +50% inflation<br>
+                1 - +100% inflation<br>
+                Warning: Inflation Penalty from buying initiatives from the same tab still persists.
+            </div>
+            <div><h3>Inflation Gain</h3>
+                How much inflation is gained.<br>
+                Initiatives that use this:<br>
+                <ul>
+                    <li>Dam: +4</li>
+                    <li>Dam Local Employment Drive: +2</li>    
+                    <li>Remote Subsidies: +2</li>
+                    <li>Medical/School Supplies: +1</li>
+                    <li>Infra, Jobs: +1.5</li>
+                    <li>Water & Healthcare & Education: +0.8</li>
+                    <li>Vaccination Drives: +0.5</li>
+                    <li>Various Military items: +0.5 - +1</li>
+                    <li>Most specials: +0.1</li>
+                       
+                </ul>
+            </div>
+            <div><h3>Inflation Cost Sensitivity</h3>
+                How sensitive a given initiative is to inflation.<br>
+                Initiatives that use this:<br>
+                <ul>
+                    <li>Infra & Remote Subsidies: 1.5</li>
+                    <li>Jobs: 1.2</li>
+                    <li>Default governmental initiatives: 1</li>
+                    <li>Education & Healthcare: 0.8</li>
+                    <li>Water & National Soldiers: 0.5</li>
+                    <li>Other initiatives & specials: 0.5 or 1 usually, sometimes 0.3 or 0.1</li>    
+                    <li>Coalition Soldiers: 0 (cost the same regardless of inflation)</li>
+                       
+                </ul>
+                
+            </div>
+            <div><h3>Military Initiative Cost Multiplier</h3>
+                An added percentage to military costs (to represent the extra cost of hosting many troops in the region).
+                <br>Usually soldier units cause this. Uses percentage system.<br>
+                Coalition Soldiers add 0.05<br>
+                National Soldiers add 0.03<br>
+                -0.5 - military initiatives cost 50% less<br>
+                0 - no change<br>
+                0.5 - military initiatives cost 50% more
+
+            </div>
+            <div><h3>Civilian Initiative Cost Multiplier</h3>
+                An added percentage to civilian costs (to represent the increased difficulty of procuring materials for them or implementing them)
+                Only used by Effective Procurement (0.1). Uses percentage system<br>
+                -0.25 - initiatives in the civilian tab cost 25% less
+                <br> 0 - no change
+                0.1 - initiatives in the civilian tab cost 10% more
+            </div>
+            <div><h3>Corruption Risk Gain</h3>
+                Flat amount of corruption risk gained from buying this initiative, multiplied by the 'initiative corruption risk' specified in the civilian editor. Uses percentage system.
+                <br>Initiatives that use this:
+                <ul>
+                    <li>National Soldiers: 0.08 - 0.1</li>
+                    <li>Telecom: 0.07</li>
+                    <li>Security: 0.06 - 0.07</li>
+                    <li>Roads & Electricity: 0.05 - 0.06</li>
+                    <li>Jobs: 0.04 - 0.055</li>
+                    <li>Water: 0.03</li>
+                    <li>Healthcare & Education: 0.01</li>
+                    <li>Vaccination & Literacy Drives: 0.005</li>
+                    <li>Coalition Soldiers: 0</li>
+                    <li>Effective Procurement: -0.03</li>
+                    <li>Other military initiatives: 0.01 - 0.05</li>
+                    <li>Other Government initiatives: 0.03 - 0.06</li>
+                </ul>
+
+            </div>
+            <div><h3>Corruption From Initiatives</h3>
+                Changes the amount of corruption gained from initiatives. Uses percentage system.<br>
+                Only Effective Procurement uses this (-0.1)<br>
+                -0.1 - 10% less corruption risk from initiatives<br>
+                0 - no change<br>
+                0.25 - 25% more corruption risk from initiatives
+            </div>
+            <div><h3>Global Corruption Increase</h3>
+                
+            </div>
+            <div><h3>AntiCorruption Teams</h3>
+                
+            </div>
+            <div><h3>AntiCorruption Team Effectiveness</h3>
+                
+            </div>
+            <div><h3>Deploy Soldier</h3>
+                
+            </div>
+            <div><h3>Coalition Soldier Training Time</h3>
+                Additional amount of turns it takes to train soldiers. <br>
+                -10 - 10 less turns<br>
+                0 - no change
+                72 - takes an additional year<br>
+                6 turns = 1 month. 72 turns = 1 year.
+            </div>
+            <div><h3>National Soldier Training Time</h3>
+                See above Coalition Soldier Training Time.
+            </div>
+            <div><h3>National Soldier Strength Multiplier</h3>
+                
+            </div>
+            <div><h3>Soldier Support Level</h3>
+                Changes how much each Soldier unit affects Local Support Level.
+                <br>-1 - Soldiers reduce Support Level
+                <br>0 - No change
+                <br>1 - Soldiers increase Support Level if stationed for a small period of time
+                Coalition Soldiers will lower Support Level over time if stationed in the same zone for longer periods of time.
+                National Soldiers will lower Support level similarly to Coalition Soldiers, albeit at a significantly smaller rate. Pretty much non existent with the default upgrades purchases.
+            </div>
+            <div><h3>Soldier Hostility Support Level</h3>
+                Changes how much each Soldier unit affects Local Hostility Level.
+                <br>-1 - Soldiers increase hostility
+                <br>0 - No change
+                <br>1 - Soldiers decrease hostility in the zone if stationed for a small period of time
+                Coalition Soldiers will increase hostility over time if stationed in the same zone for longer periods of time.
+                National Soldiers will increase hostility similarly to Coalition Soldiers, albeit at a significantly smaller rate. Pretty much non existent with the default upgrades purchases.
+            </div>
+            <div><h3>Airstrike Strength</h3>
+                Changes how much stronger airstrikes are
+                <br> -1 - weaker airstrikes
+                <br> 0 - no change
+                <br> 1 - stronger airstrike 
+            </div>
+            <div><h3>Airstrike Accuracy</h3>
+                lmao idk
+            </div>
+            <div><h3>Enable Gameplay Mechanic</h3>
+                Enables various mechanics:
+                <ul>
+                    <li>Universal Justice: No support level/reputation, only for 'anger over justice hypocrisy'</li>
+                    <li>Coalition Soldiers: Interpreters & Guides/Human Terrain System: Only affects intel gathering speed.</li>
+                    <li>Fuel Hoarding: Only increases speed, no support decrease</li>
+                </ul>
+            </div>
+            <div><h3>Disable Gameplay Mechanic</h3>
+                Self explanatory. See above 'Enable Gameplay Mechanic' for more detailed explanations.
+            </div>
+            <div><h3>Custom Component</h3>
+                Either spawns an expert or activates the positive effects of Opium Crackdown and Enhanced Surveillance. No extra cost, corruption or inflation.
+            </div>
+            <div><h3>Enable Ability</h3>
+                Unlocks Airstrikes, Drones or Garrisons.
+            </div>
+            <div><h3>Choose Ability for Cooldown Modifier</h3>
+                Changer the cooldown of any ability. <br>
+                -0.3 - 30% faster<br>
+                0 - no change<br>
+                0.5 - 50% slower
+            </div>
+            <div><h3>Attachment</h3>
+                Gain specified attachment.<br>
+                If initiative Deploys a Soldier, said Soldier will have the attachment immediately applied.
+            </div>
+            <div><h3>Initiative Unlock Criteria</h3>
+                The initiative becomes available, IF the following conditions are met:
+                -all <b>AND</b> requirement initiatives have been purchased<br>
+                -any <b>OR</b> requirement initiatives have been purchased
+            </div>
+        </div>
+        <div id='lab_7' class='lab'>
+            <div><h3>Name/Completed/Success/Destroyed</h3>
+                Self explanatory
+            </div>
+            <div><h3>Rollout time</h3>
+                Some funny values that one cannot comprehend that easily<br>
+                Here's an equation to help you out: <br>
+                AMOUNT/19*44 , where AMOUNT is the number you put in.<br>
+                Thats the base amount of turns that this initiative will roll out.
+                Sample values:
+                <ul>
+                    <li>Education: 4-6</li>
+                    <li>Healthcare: 7-8</li>
+                    <li>Vaccination Drives: 5</li>
+                    <li>Water: 9-10</li>
+                    <li>Roads: 10-20</li>
+                    <li>Telecoms: 19</li>
+                    <li>Jobs: 26</li>
+                    <li>District Representatives: 12</li>
+                    <li>Militia: 6</li>
+                    <li>Police 1/2: 30/17</li>
+                </ul>
+            </div>
+            <div><h3>Concern Type</h3>
+                Self explanatory
+            </div>
+            <div><h3>Local Intel Requirement</h3>
+                Self explanatory
+            </div>
+            <div><h3>Government Restricted Rollout</h3>
+                Not sure even how this works, but setting it too high might cause 
+            </div>
+            <div><h3>Local Support Level</h3>
+                The exact amount of Support Level applied depends on the amount of neutral people in the zone. It starts at 55% of the value on MegaBrutal.<br>
+                Some samples:
+                <ul>
+                    <li>Strong Job: 2.4</li>
+                    <li>Mediocre Job: 2</li>
+                    <li>Police: 2</li>
+                    <li>Weak Job: 1.6</li>
+                    <li>District Representatives & Electricity: 1</li>
+                    <li>Services: 0.5-0.7</li>
+                    <li>Roads: 0.15-0.4</li>
+                    <li>Militia: -1</li>
+                </ul>
+            </div>
+            <div><h3>Local Hostility Level</h3>
+                See 'Local Support Level' above. Negative values will decrease hostility, whereas positive ones will increase it.<br>
+                Additionally, there is an additional hidden variable that is not possible to test, increasing the difficulty of figuring out how it exactly works.<br>
+                Some samples:
+                <ul>
+                    <li>Strong Service -2.4/-2.5/-2.8</li>
+                    <li>Mediocre Service: -2.1/-2.24</li>
+                    <li>Weak Service: -1.5</li>
+                    <li>Police: -1</li>
+                    <li>District Representatives & Electricity: -1</li>
+                    <li>Jobs: -0.16 - -0.24</li>
+                    <li>Roads: -0.15 - -0.4</li>
+                    <li>Militia: +3</li>
+                </ul>
+            </div>
+            <div><h3>Support Level</h3>
+                How much Global Support Level is increased when this initiative is completed. Only Telecoms use this - +0.25. For further information, refer to the Support Level part of the 'Civilian Editor'. 
+            </div>
+            <div><h3>Hostility Level</h3>
+                How much Global Hostility Level is increased when this initiative is completed. Only Telecoms use this - -0.25. For further information, refer to the Hostility Level part of the 'Civilian Editor'. 
+            </div>
+            <div><h3>Local Intel Speed</h3>
+                The zone where this initiative is completed, gains this much amount of point of intel gathering. This value also will leak to adjacent zones, increasing intel gathering there as well. District Representatives use this with a value of 0.08.<br>
+                The difficulty of intel gathering depends on the hostility in the zone and difficulty level. Decay from insurgent control will slow this significantly, if not completely cancel.
+            </div>
+            <div><h3>Regional Intel Speed</h3>
+                How many points of intel gathering every zone gains when this initiative is completed - it is spread across all zones, therefore it is quite slow. Refer to 'Local Intel Speed' for extra information.
+            </div>
+            <div><h3>Rollout Time Bonus</h3>
+                How much faster initiatives are rolled out in zones where this initiative is completed. Uses a percentage system.
+                -0.25 - 25% slower rollout
+                0 - no change
+                0.5 - 50% faster rollout
+            </div>
+            <div><h3>Upgrade Roads</h3>
+                How much the road network is upgraded when the initiative is completed. Warning: Dirt Roads of level 3 are broken (OP) and roads of level -1 are a pain.
+                <br>To be used with caution.
+            </div>
+            <div><h3>Security Level</h3>
+                How much Security % is added to the zone.<br>
+                -0.2 - -20%, to a minimum of 1%, when completed<br>
+                0 - no change <br>
+                0.4 - +40% security when completed<br>
+                Militia is 0.4<br>
+                Police 1 is 0.9<br>
+                Police 2 is 2<br>
+            </div>
+            <div><h3>Kill Insurgents</h3>
+                Self explanatory. Default security initiatives have this set to 1.
+            </div>
+            <div><h3>Destruction Chance</h3>
+                Kind of misleading. When insurgents decide what to destroy, they put together the weight of all initiatives and randomly choose one. The ones weighting more, are more likely to be destroyed. IF redoing all initiatives, feel free to set this to any amount.<br>
+                Default values are:
+                <ul>
+                    <li>Militia: 0.2</li>
+                    <li>Police: 0.15</li>
+                    <li>District Representatives: 0.1</li>
+                    <li>Jobs: 0.05</li>
+                    <li>Infra: 0.025</li>
+                    <li>Services/Road 1: 0.005</li>
+                    <li>School Expansion/Vaccination Drives: 0</li>
+                </ul>
+            </div>
+            <div><h3>Rollout Focus</h3>
+                Lie. This is the maximum distance an initiative can be rolled out from the government. There is no 'chance'. Setting this to insanely high amounts will not stop initiatives from rolling out in HQ.
+            </div>
+            <div><h3>Rollout Amount</h3>
+                Self explanatory. If this runs out, initiative will stop rolling out.
+            </div>
+        </div>
+    </body>
+    
+</html>
