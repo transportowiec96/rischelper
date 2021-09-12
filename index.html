@@ -706,7 +706,7 @@
                 An added percentage to civilian costs (to represent the increased difficulty of procuring materials for them or implementing them)
                 Only used by Effective Procurement (0.1). Uses percentage system<br>
                 -0.25 - initiatives in the civilian tab cost 25% less
-                <br> 0 - no change
+                <br> 0 - no change<br>
                 0.1 - initiatives in the civilian tab cost 10% more
             </div>
             <div><h3>Corruption Risk Gain</h3>
@@ -736,16 +736,28 @@
                 0.25 - 25% more corruption risk from initiatives
             </div>
             <div><h3>Global Corruption Increase</h3>
-                
+                How much Corruption is increased/decreased. Uses a percentage system.<br>
+                -0.2 - -20% Corruption<br>
+                0 - no change<br>
+                0.5 - +50% corruption<br>
+                Positive values to be used with caution
             </div>
             <div><h3>AntiCorruption Teams</h3>
-                
+                How many AntiCorruption teams you gain. Each team has a set effectiveness which dictates how much corruption they can remove.<br>
+                Usually set to 1 per initiative.<br>
+                -1 - minus one AntiCorruption Team<br>
+                0 - no change <br>
+                1 - plus one AntiCorruption Team<br>
+                If you don't have any AntiCorruption Team Effectiveness, this does effectively nothing.
             </div>
             <div><h3>AntiCorruption Team Effectiveness</h3>
-                
+                How much corruption reduction each of your AntiCorruption teams gain/lose. <br>
+                Usually set to 0.005<br>
+                This modifies all AntiCorruption teams you have, not just one.<br>
+                If you don't have any AntiCorruption teams, this does effectively nothing.
             </div>
             <div><h3>Deploy Soldier</h3>
-                
+                Self explanatory
             </div>
             <div><h3>Coalition Soldier Training Time</h3>
                 Additional amount of turns it takes to train soldiers. <br>
@@ -758,7 +770,15 @@
                 See above Coalition Soldier Training Time.
             </div>
             <div><h3>National Soldier Strength Multiplier</h3>
-                
+                How much stronger National Soldiers become.<br>
+                For each '1' National Soldier Strength Multiplier, National Soldiers gain a 25% increase in firepower.<br>
+                Initiatives that use this:
+                <ul>
+                    <li>Weapon Upgrades: +4</li>
+                    <li>General: +3.5</li>
+                    <li>Warlord Specials: +2.5 (warlord starts with weaker soldiers)</li>
+                    <li>National Truck Logistics: +1</li>
+                </ul>
             </div>
             <div><h3>Soldier Support Level</h3>
                 Changes how much each Soldier unit affects Local Support Level.
